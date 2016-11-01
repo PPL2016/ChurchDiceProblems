@@ -1,0 +1,85 @@
+(define (filter op xs)
+        (foldr
+           (lambda (z x) (if (op x) (cons x z) z))
+           '()
+           xs))
+
+(filter (lambda (x) (< x 1)) '(1))
+
+
+;(hist (repeat 10000 (lambda () (uniform 1 6))) "hist")
+
+(define (d6) (let ((n (+ (if (flip) 1 0) 
+                         (* 2 (if (flip) 1 0)) 
+                         (* 4 (if (flip) 1 0)))))  
+               (if (and (>= n 1) (<= n 6)) n (d6))))
+
+(define (d8) (let ((n (+ (if (flip) 1 0) 
+                          (* 2 (if (flip) 1 0)) 
+                          (* 4 (if (flip) 1 0)) 
+                          (* 8 (if (flip) 1 0)) )))  
+  (if (and (>= n 1) (<= n 8)) n (d8))))
+
+(define (d12) (let ((n (+ (if (flip) 1 0) 
+                          (* 2 (if (flip) 1 0)) 
+                          (* 4 (if (flip) 1 0)) 
+                          (* 8 (if (flip) 1 0)) )))  
+  (if (and (>= n 1) (<= n 12)) n (d12))))
+
+(define (d20) (let ((n (+ (if (flip) 1 0) 
+                          (* 2 (if (flip) 1 0)) 
+                          (* 4 (if (flip) 1 0)) 
+                          (* 8 (if (flip) 1 0)) 
+                          (* 16 (if (flip) 1 0 )))))  
+  (if (and (>= n 1) (<= n 20)) n (d20))))
+
+
+(define (draw)
+  (let ((n (uniform 1 46))) 
+    (if ( < n 9) 6
+        (if ( < n 18) 8
+            (if ( < n 32) 12
+                20)))))
+
+
+(define (take-sample)
+  (rejection-query
+
+   (define N (d6))
+   (define FLIPS (repeat N flip))
+
+   N
+
+   (condition (= (length (filter id FLIPS)) 3))))
+
+
+;(define mh-sample
+;  (mh-query 1000
+;            10
+;   (define N (d6))
+;   (define FLIPS (repeat N flip))
+;   N
+;   (condition (= (length (filter id FLIPS)) 3))))
+;(hist mh-sample "lol")
+
+(define (roll d)
+  (if (= d 6) (d6)
+      (if (= d 8) (d8)
+          (if (= d 12) (d12)
+              (if (= d 20) (d20))))))
+  
+
+(define (tally)
+  (let* ((draw1 (draw))
+        (draw2 (draw))
+        (r1 (roll draw1))
+        (r2 (roll draw2)))
+        (+ r1 r2)))
+
+(hist (repeat 10000 tally) "Tally")
+
+
+;(hist (repeat 1000 d6) "D6 Hist (Problem A)")
+;(hist (repeat 1000 d12) "D12 Hist (Problem A)")
+;;(hist (repeat 1000 draw) "Draw")
+;(hist (repeat 1000 take-sample) "Posterior distribution of die rolls given three heads (Problem M)")
