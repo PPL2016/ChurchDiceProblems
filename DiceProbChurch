@@ -9,6 +9,11 @@
 
 ;(hist (repeat 10000 (lambda () (uniform 1 6))) "hist")
 
+(define (d5) (let ((n (+ (if (flip) 1 0) 
+                         (* 2 (if (flip) 1 0)) 
+                         (* 4 (if (flip) 1 0)))))  
+               (if (and (>= n 1) (<= n 5)) n (d5))))
+
 (define (d6) (let ((n (+ (if (flip) 1 0) 
                          (* 2 (if (flip) 1 0)) 
                          (* 4 (if (flip) 1 0)))))  
@@ -69,17 +74,65 @@
               (if (= d 20) (d20))))))
   
 
+; Our tally sheet only sums up how many marks are in the right column
 (define (tally)
   (let* ((draw1 (draw))
         (draw2 (draw))
         (r1 (roll draw1))
-        (r2 (roll draw2)))
-        (+ r1 r2)))
+        (r2 (roll draw2))
+        (sum (+ r1 r2)))
+    (if (< sum 16) 0
+        (if (= sum 16) 0
+            1))))
 
-(hist (repeat 10000 tally) "Tally")
+
+(define (diceSumSimulation n)
+  (let* ((dice (repeat n draw))
+         (sumDice (lambda () (sum (map roll dice )))))
+         (repeat 1 sumDice)))
+
+(define (slips)
+  (rejection-query
+    (define n (d5))  ;random num between 1 and 5
+    (define sums ((lambda () (sum (map roll (repeat n draw))))))
+
+    n
+   
+    (condition (= 21 sums))))
+
+(define (slips2)
+  (rejection-query
+   (define n (slips))
+   (define sums ((lambda () (sum (map roll (repeat n draw))))))
+
+    n
+   
+    (condition (= 15 sums))))
+
+
+(define (slips3)
+  (rejection-query
+   (define n (slips2))
+   (define sums ((lambda () (sum (map roll (repeat n draw))))))
+
+    n
+   
+    (condition (= 34 sums))))
+
+
+(slips3)
+
+;'(21, 15, 34, 12, 18, 38, 46, 13, 24, 27)
+;(hist (repeat 1000 slips) "slips")
+
+
+
+
 
 
 ;(hist (repeat 1000 d6) "D6 Hist (Problem A)")
 ;(hist (repeat 1000 d12) "D12 Hist (Problem A)")
 ;;(hist (repeat 1000 draw) "Draw")
 ;(hist (repeat 1000 take-sample) "Posterior distribution of die rolls given three heads (Problem M)")
+;'("Problem P: Average marks on right column of tally sheet:", (*(/ (sum (repeat 1000 tally)) 1000) 30))
+
