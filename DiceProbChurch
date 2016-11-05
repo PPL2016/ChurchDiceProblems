@@ -75,7 +75,7 @@
   
 
 ; Our tally sheet only sums up how many marks are in the right column
-(define (tally)
+(define (tallyR)
   (let* ((draw1 (draw))
         (draw2 (draw))
         (r1 (roll draw1))
@@ -120,7 +120,40 @@
     (condition (= 34 sums))))
 
 
-(slips3)
+
+(define (tallyL)
+  (let* ((draw1 (draw))
+        (draw2 (draw))
+        (r1 (roll draw1))
+        (r2 (roll draw2))
+        (sum (+ r1 r2)))
+    (if (< sum 16) 1 0)))
+
+(define (tallyEq)
+  (let* ((draw1 (draw))
+        (draw2 (draw))
+        (r1 (roll draw1))
+        (r2 (roll draw2))
+        (sum (+ r1 r2)))
+    (if (= sum 16) 1 0)))
+
+(define (tallySheet l e r num)
+  (let* ((draw1 (draw))
+        (draw2 (draw))
+        (r1 (roll draw1))
+        (r2 (roll draw2))
+        (sum (+ r1 r2)))
+    (if (= 0 num) (list l e r)
+        (if (< sum 16) (tallySheet (+ 1 l) e r (- num 1))
+            (if (= sum 16) (tallySheet l (+ 1 e) r (- num 1))
+                (tallySheet l e (+ 1 r) (- num 1)))))))
+            
+        
+
+
+(tallySheet 0 0 0 30)
+
+
 
 ;'(21, 15, 34, 12, 18, 38, 46, 13, 24, 27)
 ;(hist (repeat 1000 slips) "slips")
@@ -134,5 +167,5 @@
 ;(hist (repeat 1000 d12) "D12 Hist (Problem A)")
 ;;(hist (repeat 1000 draw) "Draw")
 ;(hist (repeat 1000 take-sample) "Posterior distribution of die rolls given three heads (Problem M)")
-;'("Problem P: Average marks on right column of tally sheet:", (*(/ (sum (repeat 1000 tally)) 1000) 30))
+;'("Problem P: Average marks on right column of tally sheet:", (*(/ (sum (repeat 1000 tallyR)) 1000) 30))
 
