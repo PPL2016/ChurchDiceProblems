@@ -100,24 +100,24 @@
    
     (condition (= 21 sums))))
 
-(define (slips2)
-  (rejection-query
-   (define n (slips))
-   (define sums ((lambda () (sum (map roll (repeat n draw))))))
-
-    n
-   
-    (condition (= 15 sums))))
-
-
-(define (slips3)
-  (rejection-query
-   (define n (slips2))
-   (define sums ((lambda () (sum (map roll (repeat n draw))))))
-
-    n
-   
-    (condition (= 34 sums))))
+;(define (slips2)
+;  (rejection-query
+;   (define n (slips))
+;   (define sums ((lambda () (sum (map roll (repeat n draw))))))
+;
+;    n
+;   
+;    (condition (= 15 sums))))
+;
+;
+;(define (slips3)
+;  (rejection-query
+;   (define n (slips2))
+;   (define sums ((lambda () (sum (map roll (repeat n draw))))))
+;
+;    n
+;   
+;    (condition (= 34 sums))))
 
 
 
